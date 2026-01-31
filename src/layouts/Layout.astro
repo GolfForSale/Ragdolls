@@ -55,7 +55,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     
     <!-- Netlify Identity Widget (for CMS authentication) -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
   <body class="min-h-screen flex flex-col">
     <Header />
@@ -66,17 +66,28 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     
     <!-- Netlify Identity - handle confirmation and login -->
     <script is:inline>
-      if (window.netlifyIdentity) {
-        // Initialize the widget - this will auto-detect tokens in URL
-        window.netlifyIdentity.init({
-          container: 'body',
-          locale: 'en'
-        });
+      // Wait for netlifyIdentity to load
+      function initNetlifyIdentity() {
+        if (typeof netlifyIdentity === 'undefined') {
+          // Widget not loaded yet, wait and retry
+          setTimeout(initNetlifyIdentity, 50);
+          return;
+        }
         
-        // Handle post-login redirect to admin
-        window.netlifyIdentity.on("login", function() {
-          document.location.href = "/admin/";
+        // Initialize widget
+        netlifyIdentity.init();
+        
+        // Redirect to admin after login
+        netlifyIdentity.on('login', function() {
+          document.location.href = '/admin/';
         });
+      }
+      
+      // Start when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initNetlifyIdentity);
+      } else {
+        initNetlifyIdentity();
       }
     </script>
   </body>
