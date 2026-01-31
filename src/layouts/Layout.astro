@@ -66,49 +66,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     
     <!-- Netlify Identity - handle confirmation and login -->
     <script is:inline>
-      (function() {
-        // Wait for netlifyIdentity to be available
-        function initIdentity() {
-          if (typeof window.netlifyIdentity === 'undefined') {
-            setTimeout(initIdentity, 100);
-            return;
-          }
-          
-          var netlifyIdentity = window.netlifyIdentity;
-          
-          // Handle login redirect
-          netlifyIdentity.on("init", function(user) {
-            if (!user) {
-              netlifyIdentity.on("login", function() {
-                document.location.href = "/admin/";
-              });
-            }
-          });
-          
-          // Handle errors
-          netlifyIdentity.on("error", function(err) {
-            console.error("Netlify Identity Error:", err);
-          });
-          
-          // Check for tokens in URL hash and open modal
-          var hash = window.location.hash;
-          if (hash) {
-            if (hash.includes("confirmation_token") || 
-                hash.includes("recovery_token") || 
-                hash.includes("invite_token") ||
-                hash.includes("access_token")) {
-              netlifyIdentity.open();
-            }
-          }
-        }
+      if (window.netlifyIdentity) {
+        // Initialize the widget - this will auto-detect tokens in URL
+        window.netlifyIdentity.init({
+          container: 'body',
+          locale: 'en'
+        });
         
-        // Start initialization after DOM is ready
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', initIdentity);
-        } else {
-          initIdentity();
-        }
-      })();
+        // Handle post-login redirect to admin
+        window.netlifyIdentity.on("login", function() {
+          document.location.href = "/admin/";
+        });
+      }
     </script>
   </body>
 </html>
