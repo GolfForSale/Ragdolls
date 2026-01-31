@@ -50,7 +50,7 @@ const gallery = defineCollection({
     category: z.string().optional(),
     catName: z.string().optional(),
     description: z.string().optional(),
-    date: z.coerce.date().optional(),
+    date: z.union([z.coerce.date(), z.literal("")]).optional().transform(val => val === "" ? undefined : val),
   }),
 });
 
