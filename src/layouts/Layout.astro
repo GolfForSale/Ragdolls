@@ -64,16 +64,29 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </main>
     <Footer />
     
-    <!-- Netlify Identity redirect after login -->
-    <script>
+    <!-- Netlify Identity - handle confirmation and login -->
+    <script is:inline>
+      // Initialize Netlify Identity and handle tokens
       if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", (user: any) => {
+        window.netlifyIdentity.on("init", function(user) {
           if (!user) {
-            window.netlifyIdentity.on("login", () => {
+            window.netlifyIdentity.on("login", function() {
               document.location.href = "/admin/";
             });
           }
         });
+        
+        // Handle confirmation, recovery, and invite tokens
+        window.netlifyIdentity.on("error", function(err) {
+          console.error("Netlify Identity Error:", err);
+        });
+        
+        // Check if there's a token in the URL and open the modal
+        const hash = window.location.hash;
+        if (hash && (hash.includes("confirmation_token") || hash.includes("recovery_token") || hash.includes("invite_token"))) {
+          // Open the identity modal to process the token
+          window.netlifyIdentity.open();
+        }
       }
     </script>
   </body>
