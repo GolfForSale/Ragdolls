@@ -8,8 +8,8 @@ backend:
 #   proxy_url: http://localhost:8081/api/v1
 
 # Site URL for previews
-site_url: https://euphonious-kelpie-b6f252.netlify.app
-display_url: https://euphonious-kelpie-b6f252.netlify.app
+site_url: https://kociakizbajki.netlify.app
+display_url: https://kociakizbajki.netlify.app
 
 media_folder: "public/images"
 public_folder: "/images"
