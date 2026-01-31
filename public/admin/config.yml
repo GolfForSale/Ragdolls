@@ -7,8 +7,15 @@ backend:
 #   name: proxy
 #   proxy_url: http://localhost:8081/api/v1
 
+# Site URL for previews
+site_url: https://euphonious-kelpie-b6f252.netlify.app
+display_url: https://euphonious-kelpie-b6f252.netlify.app
+
 media_folder: "public/images"
 public_folder: "/images"
+
+# Show images in preview
+show_preview_links: true
 
 locale: 'pl'
 
