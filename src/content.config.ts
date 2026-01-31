@@ -9,7 +9,7 @@ const cats = defineCollection({
     mainImage: z.string(),
     gallery: z.array(z.string()).optional(),
     color: z.string(),
-    birthDate: z.string().optional(),
+    birthDate: z.coerce.date().optional(),
     parents: z.string().optional(),
     pedigreeNumber: z.string().optional(),
     description: z.string().optional(),
@@ -24,7 +24,7 @@ const litters = defineCollection({
     name: z.string(),
     mother: z.string(),
     father: z.string(),
-    birthDate: z.string().optional(),
+    birthDate: z.coerce.date().optional(),
     status: z.enum(['planned', 'available', 'reserved', 'sold']).default('planned'),
     mainImage: z.string().optional(),
     gallery: z.array(z.string()).optional(),
@@ -50,7 +50,7 @@ const gallery = defineCollection({
     category: z.string().optional(),
     catName: z.string().optional(),
     description: z.string().optional(),
-    date: z.string().optional(),
+    date: z.coerce.date().optional(),
   }),
 });
 

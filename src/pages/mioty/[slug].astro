@@ -41,7 +41,7 @@ const kittenStatusLabels = {
   sold: 'Sprzedany',
 };
 
-const formattedBirthDate = birthDate ? new Date(birthDate).toLocaleDateString('pl-PL', {
+const formattedBirthDate = birthDate ? birthDate.toLocaleDateString('pl-PL', {
   year: 'numeric',
   month: 'long',
   day: 'numeric'

@@ -10,8 +10,8 @@ const sortedLitters = litters.sort((a, b) => {
   const statusDiff = statusOrder[a.data.status] - statusOrder[b.data.status];
   if (statusDiff !== 0) return statusDiff;
   
-  const dateA = a.data.birthDate ? new Date(a.data.birthDate).getTime() : 0;
-  const dateB = b.data.birthDate ? new Date(b.data.birthDate).getTime() : 0;
+  const dateA = a.data.birthDate ? a.data.birthDate.getTime() : 0;
+  const dateB = b.data.birthDate ? b.data.birthDate.getTime() : 0;
   return dateB - dateA;
 });
 ---

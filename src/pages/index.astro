@@ -22,8 +22,8 @@ try {
 const featuredCats = cats.slice(0, 3);
 const latestLitter = litters.length > 0 
   ? litters.sort((a, b) => {
-      const dateA = a.data.birthDate ? new Date(a.data.birthDate).getTime() : 0;
-      const dateB = b.data.birthDate ? new Date(b.data.birthDate).getTime() : 0;
+      const dateA = a.data.birthDate ? a.data.birthDate.getTime() : 0;
+      const dateB = b.data.birthDate ? b.data.birthDate.getTime() : 0;
       return dateB - dateA;
     })[0]
   : null;

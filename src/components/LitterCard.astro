@@ -22,7 +22,7 @@ const statusLabels = {
   planned: 'Planowany',
 };
 
-const formattedDate = birthDate ? new Date(birthDate).toLocaleDateString('pl-PL', {
+const formattedDate = birthDate ? birthDate.toLocaleDateString('pl-PL', {
   year: 'numeric',
   month: 'long',
   day: 'numeric'

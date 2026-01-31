@@ -15,7 +15,7 @@ const { cat } = Astro.props;
 const { name, mainImage, gallery, color, birthDate, parents, pedigreeNumber, description } = cat.data;
 const { Content } = await render(cat);
 
-const formattedBirthDate = birthDate ? new Date(birthDate).toLocaleDateString('pl-PL', {
+const formattedBirthDate = birthDate ? birthDate.toLocaleDateString('pl-PL', {
   year: 'numeric',
   month: 'long',
   day: 'numeric'
