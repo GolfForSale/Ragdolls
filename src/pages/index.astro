@@ -1,0 +1,238 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CatCard from '../components/CatCard.astro';
+import { getCollection } from 'astro:content';
+
+// Get featured cats and latest litter (handle empty collections)
+let cats: any[] = [];
+let litters: any[] = [];
+
+try {
+  cats = await getCollection('cats');
+} catch (e) {
+  cats = [];
+}
+
+try {
+  litters = await getCollection('litters');
+} catch (e) {
+  litters = [];
+}
+
+const featuredCats = cats.slice(0, 3);
+const latestLitter = litters.length > 0 
+  ? litters.sort((a, b) => {
+      const dateA = a.data.birthDate ? new Date(a.data.birthDate).getTime() : 0;
+      const dateB = b.data.birthDate ? new Date(b.data.birthDate).getTime() : 0;
+      return dateB - dateA;
+    })[0]
+  : null;
+---
+
+<Layout title="Strona główna" description="Hodowla bajkowych kotów rasy Ragdoll. Kociak z Bajki*PL - gdzie każdy kot to bohater własnej bajki.">
+  
+  <!-- Hero Section with Big Cat Photo -->
+  <section class="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-gradient-to-br from-lavender-100 via-lavender-50 to-rose-gold-light/20"></div>
+    
+    <!-- Decorative Elements -->
+    <div class="absolute top-20 left-10 w-32 h-32 bg-lavender-300/30 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 right-10 w-48 h-48 bg-rose-gold/20 rounded-full blur-3xl"></div>
+    
+    <div class="container mx-auto px-4 py-16 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <!-- Text Content -->
+        <div class="text-center lg:text-left order-2 lg:order-1">
+          <span class="inline-block px-4 py-2 bg-lavender-200 text-lavender-700 rounded-full text-sm font-medium mb-6">
+            Hodowla zarejestrowana w FIFe
+          </span>
+          <h1 class="text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-lavender-800 mb-6 leading-tight">
+            Kociak z <span class="text-gradient">Bajki</span>*PL
+          </h1>
+          <p class="text-xl text-lavender-600 mb-8 max-w-xl mx-auto lg:mx-0">
+            Witamy w świecie bajkowych kotów rasy Ragdoll. Każdy nasz kociak to bohater własnej niezwykłej historii.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <a href="/kototeka" class="btn-primary">
+              Poznaj nasze koty
+            </a>
+            <a href="/mioty" class="btn-secondary">
+              Sprawdź dostępne mioty
+            </a>
+          </div>
+        </div>
+        
+        <!-- Hero Cat Photo -->
+        <div class="order-1 lg:order-2 flex justify-center">
+          <div class="relative">
+            <!-- Decorative frame -->
+            <div class="absolute -inset-4 bg-gradient-to-br from-lavender-400 to-rose-gold rounded-[2rem] opacity-20 blur-lg"></div>
+            <div class="relative w-full max-w-lg aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
+              <img 
+                src="/images/hero-cat.jpg" 
+                alt="Piękny kot rasy Ragdoll" 
+                class="w-full h-full object-cover"
+                loading="eager"
+              />
+              <!-- Gradient overlay at bottom for text if needed -->
+              <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-lavender-900/50 to-transparent"></div>
+              <div class="absolute bottom-4 left-4 text-white">
+                <p class="font-heading text-xl font-semibold">Ragdoll</p>
+                <p class="text-sm opacity-80">Szmaciana lalka</p>
+              </div>
+            </div>
+            <!-- Floating badge -->
+            <div class="absolute -bottom-4 -right-4 bg-white rounded-full p-4 shadow-xl">
+              <div class="w-16 h-16 bg-gradient-to-br from-lavender-400 to-rose-gold rounded-full flex items-center justify-center">
+                <span class="text-2xl">💜</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- About Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-4xl font-heading font-bold text-lavender-700 mb-6">
+          O naszej hodowli
+        </h2>
+        <div class="w-24 h-1 bg-gradient-to-r from-lavender-400 to-rose-gold mx-auto mb-8 rounded-full"></div>
+        <p class="text-lg text-lavender-600 leading-relaxed mb-6">
+          Moja przygoda z kotami tej niezwykłej rasy rozpoczęła się na studiach Zootechnicznych. 
+          To wtedy pierwszy raz zobaczyłam te hipnotyzujące niebieskie oczy. 
+          Od razu zaczęłam szukać więcej informacji na ich temat, gdyż sama nazwa Ragdoll 
+          „szmaciana lalka" wydawała mi się intrygująca.
+        </p>
+        <p class="text-lg text-lavender-600 leading-relaxed mb-8">
+          Teraz nie wyobrażam sobie swojego życia bez nich. Koty o niezwykłym usposobieniu, 
+          charakterze i wyglądzie, które nie zawsze zachowują się jak koty. Istna bajka!
+        </p>
+        <a href="/o-nas" class="btn-secondary">
+          Czytaj więcej o nas
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Featured Cats Section -->
+  <section class="py-20 bg-lavender-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-heading font-bold text-lavender-700 mb-4">
+          Nasza Kototeka
+        </h2>
+        <p class="text-lavender-600 text-lg">Poznaj nasze bajkowe koty</p>
+        <div class="w-24 h-1 bg-gradient-to-r from-lavender-400 to-rose-gold mx-auto mt-6 rounded-full"></div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {featuredCats.length > 0 ? (
+          featuredCats.map((cat) => (
+            <CatCard cat={cat} />
+          ))
+        ) : (
+          <!-- Placeholder cards when no cats in CMS yet -->
+          <>
+            <article class="card group">
+              <div class="aspect-[4/5] bg-lavender-200 flex items-center justify-center">
+                <span class="text-6xl">🐱</span>
+              </div>
+              <div class="p-6">
+                <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-2">Falbala</h3>
+                <p class="text-lavender-600 text-sm">Blue bicolor</p>
+              </div>
+            </article>
+            <article class="card group">
+              <div class="aspect-[4/5] bg-lavender-200 flex items-center justify-center">
+                <span class="text-6xl">🐱</span>
+              </div>
+              <div class="p-6">
+                <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-2">Irma</h3>
+                <p class="text-lavender-600 text-sm">Seal bicolor</p>
+              </div>
+            </article>
+            <article class="card group">
+              <div class="aspect-[4/5] bg-lavender-200 flex items-center justify-center">
+                <span class="text-6xl">🐱</span>
+              </div>
+              <div class="p-6">
+                <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-2">Bagheera</h3>
+                <p class="text-lavender-600 text-sm">Seal mitted</p>
+              </div>
+            </article>
+          </>
+        )}
+      </div>
+      
+      <div class="text-center mt-12">
+        <a href="/kototeka" class="btn-primary">
+          Zobacz całą Kototekę
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Latest Litter Section -->
+  <section class="py-20 bg-gradient-to-br from-lavender-700 to-lavender-800 text-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+          <span class="inline-block px-4 py-2 bg-rose-gold/30 text-rose-gold-light rounded-full text-sm font-medium mb-4">
+            Aktualności
+          </span>
+          <h2 class="text-4xl font-heading font-bold mb-4">
+            Planowane mioty
+          </h2>
+          <p class="text-lavender-300">Sprawdź nasze nadchodzące i aktualne mioty</p>
+        </div>
+        
+        {latestLitter ? (
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center">
+            <h3 class="font-heading text-2xl font-semibold mb-4">{latestLitter.data.name}</h3>
+            <p class="text-lavender-200 mb-6">{latestLitter.data.description}</p>
+            <a href={`/mioty/${latestLitter.slug}`} class="btn-primary">
+              Zobacz szczegóły
+            </a>
+          </div>
+        ) : (
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center">
+            <p class="text-lavender-200 mb-6">
+              Aktualnie planujemy kolejne mioty. Zapraszamy do kontaktu w celu rezerwacji.
+            </p>
+            <a href="/mioty" class="btn-primary">
+              Zobacz planowane mioty
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-4xl font-heading font-bold text-lavender-700 mb-6">
+          Zainteresowany naszymi kotami?
+        </h2>
+        <p class="text-lg text-lavender-600 mb-8">
+          Skontaktuj się z nami, chętnie odpowiemy na wszystkie pytania dotyczące rasy Ragdoll i naszej hodowli.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/kontakt" class="btn-primary">
+            Skontaktuj się
+          </a>
+          <a href="/zanim-kupisz-kota" class="btn-secondary">
+            Zanim kupisz kota
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+</Layout>

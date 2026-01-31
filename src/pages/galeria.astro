@@ -1,0 +1,140 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PhotoGallery from '../components/PhotoGallery.astro';
+import { getCollection } from 'astro:content';
+
+let galleryItems: any[] = [];
+
+try {
+  galleryItems = await getCollection('gallery');
+} catch (e) {
+  galleryItems = [];
+}
+
+const sortedGallery = galleryItems.sort((a, b) => {
+  const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+  return dateB - dateA;
+});
+
+// Get unique categories
+const categories = [...new Set(galleryItems.map(item => item.data.category).filter(Boolean))];
+
+const galleryImages = sortedGallery.map((item) => ({
+  src: item.data.image,
+  alt: item.data.title,
+  title: item.data.title,
+  category: item.data.category,
+}));
+---
+
+<Layout 
+  title="Galeria" 
+  description="Galeria zdjęć kotów rasy Ragdoll z hodowli Kociak z Bajki*PL. Zobacz nasze piękne koty i kocięta."
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-lavender-100 via-lavender-50 to-rose-gold-light/20 py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-heading font-bold text-lavender-800 mb-4">
+        Galeria
+      </h1>
+      <p class="text-xl text-lavender-600 max-w-2xl mx-auto">
+        Przejrzyj zdjęcia naszych bajkowych kotów i kociąt.
+      </p>
+      <div class="w-24 h-1 bg-gradient-to-r from-lavender-400 to-rose-gold mx-auto mt-8 rounded-full"></div>
+    </div>
+  </section>
+  
+  <!-- Gallery -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      {galleryImages.length > 0 ? (
+        <>
+          {/* Category Filter */}
+          {categories.length > 0 && (
+            <div class="flex flex-wrap justify-center gap-3 mb-12">
+              <button 
+                class="filter-btn active px-4 py-2 rounded-full text-sm font-medium bg-rose-gold text-white transition-all"
+                data-category="all"
+              >
+                Wszystkie
+              </button>
+              {categories.map((category) => (
+                <button 
+                  class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-lavender-100 text-lavender-700 hover:bg-lavender-200 transition-all"
+                  data-category={category}
+                >
+                  {category === 'cats' ? 'Koty' : 
+                   category === 'kittens' ? 'Kocięta' : 
+                   category === 'daily' ? 'Codzienność' : 
+                   category === 'shows' ? 'Wystawy' : category}
+                </button>
+              ))}
+            </div>
+          )}
+          
+          <div class="max-w-6xl mx-auto">
+            <PhotoGallery images={galleryImages} columns={3} />
+          </div>
+        </>
+      ) : (
+        <div class="max-w-2xl mx-auto text-center">
+          <div class="bg-lavender-50 rounded-2xl p-12">
+            <span class="text-6xl mb-6 block">📷</span>
+            <h2 class="font-heading text-2xl font-semibold text-lavender-700 mb-4">
+              Galeria wkrótce
+            </h2>
+            <p class="text-lavender-600 mb-8">
+              Zdjęcia będą dodawane przez panel administracyjny. 
+              Wróć wkrótce, aby zobaczyć nasze bajkowe koty!
+            </p>
+            <a href="/kototeka" class="btn-primary">
+              Zobacz Kototekę
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = btn.getAttribute('data-category');
+        
+        // Update active button
+        filterBtns.forEach(b => {
+          b.classList.remove('active', 'bg-rose-gold', 'text-white');
+          b.classList.add('bg-lavender-100', 'text-lavender-700');
+        });
+        btn.classList.add('active', 'bg-rose-gold', 'text-white');
+        btn.classList.remove('bg-lavender-100', 'text-lavender-700');
+        
+        // Filter images
+        galleryItems.forEach(item => {
+          const itemCategory = item.querySelector('span')?.textContent?.toLowerCase();
+          if (category === 'all' || !category) {
+            (item as HTMLElement).style.display = '';
+          } else {
+            const categoryMap: Record<string, string> = {
+              'cats': 'koty',
+              'kittens': 'kocięta',
+              'daily': 'codzienność',
+              'shows': 'wystawy',
+            };
+            if (itemCategory === categoryMap[category] || itemCategory === category) {
+              (item as HTMLElement).style.display = '';
+            } else {
+              (item as HTMLElement).style.display = 'none';
+            }
+          }
+        });
+      });
+    });
+  });
+</script>

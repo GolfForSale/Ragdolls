@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  cat: CollectionEntry<'cats'>;
+}
+
+const { cat } = Astro.props;
+const { name, mainImage, color, description } = cat.data;
+---
+
+<article class="card group cursor-pointer" onclick={`window.location.href='/kototeka/${cat.slug}'`}>
+  <div class="aspect-[4/5] overflow-hidden relative">
+    <img 
+      src={mainImage || '/images/placeholder-cat.jpg'} 
+      alt={name}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-lavender-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  </div>
+  <div class="p-6">
+    <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-2 group-hover:text-rose-gold transition-colors">
+      {name}
+    </h3>
+    {color && (
+      <p class="text-lavender-500 text-sm mb-3">{color}</p>
+    )}
+    {description && (
+      <p class="text-lavender-600 text-sm line-clamp-2">{description}</p>
+    )}
+    <div class="mt-4 flex items-center text-rose-gold text-sm font-medium">
+      <span>Zobacz profil</span>
+      <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+</article>

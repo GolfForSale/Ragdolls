@@ -1,0 +1,83 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CatCard from '../../components/CatCard.astro';
+import { getCollection } from 'astro:content';
+
+const cats = await getCollection('cats', ({ data }) => data.isVisible !== false);
+---
+
+<Layout 
+  title="Kototeka" 
+  description="Poznaj nasze bajkowe koty rasy Ragdoll. Każdy z nich ma niepowtarzalny charakter i osobowość."
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-lavender-100 via-lavender-50 to-rose-gold-light/20 py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-heading font-bold text-lavender-800 mb-4">
+        Kototeka
+      </h1>
+      <p class="text-xl text-lavender-600 max-w-2xl mx-auto">
+        Poznaj nasze bajkowe koty. Każdy z nich jest wyjątkowy i niepowtarzalny.
+      </p>
+      <div class="w-24 h-1 bg-gradient-to-r from-lavender-400 to-rose-gold mx-auto mt-8 rounded-full"></div>
+    </div>
+  </section>
+  
+  <!-- Cats Grid -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      {cats.length > 0 ? (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {cats.map((cat) => (
+            <CatCard cat={cat} />
+          ))}
+        </div>
+      ) : (
+        <!-- Placeholder when no cats in CMS -->
+        <div class="max-w-6xl mx-auto">
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <article class="card">
+              <div class="aspect-[4/5] bg-lavender-100 flex items-center justify-center">
+                <div class="text-center">
+                  <span class="text-6xl mb-4 block">🐱</span>
+                  <p class="text-lavender-500 text-sm">Zdjęcie wkrótce</p>
+                </div>
+              </div>
+              <div class="p-6">
+                <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-2">Falbala</h3>
+                <p class="text-lavender-500 text-sm">Blue bicolor</p>
+              </div>
+            </article>
+            <article class="card">
+              <div class="aspect-[4/5] bg-lavender-100 flex items-center justify-center">
+                <div class="text-center">
+                  <span class="text-6xl mb-4 block">🐱</span>
+                  <p class="text-lavender-500 text-sm">Zdjęcie wkrótce</p>
+                </div>
+              </div>
+              <div class="p-6">
+                <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-2">Irma</h3>
+                <p class="text-lavender-500 text-sm">Seal bicolor</p>
+              </div>
+            </article>
+            <article class="card">
+              <div class="aspect-[4/5] bg-lavender-100 flex items-center justify-center">
+                <div class="text-center">
+                  <span class="text-6xl mb-4 block">🐱</span>
+                  <p class="text-lavender-500 text-sm">Zdjęcie wkrótce</p>
+                </div>
+              </div>
+              <div class="p-6">
+                <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-2">Bagheera</h3>
+                <p class="text-lavender-500 text-sm">Seal mitted</p>
+              </div>
+            </article>
+          </div>
+          <p class="text-center text-lavender-500 mt-12">
+            Koty zostaną dodane przez panel administracyjny.
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

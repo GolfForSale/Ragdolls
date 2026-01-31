@@ -1,0 +1,120 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# For local development - uncomment below and comment out git-gateway above
+# backend:
+#   name: proxy
+#   proxy_url: http://localhost:8081/api/v1
+
+media_folder: "public/images"
+public_folder: "/images"
+
+locale: 'pl'
+
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  # Kototeka (Cats)
+  - name: "cats"
+    label: "Kototeka (Koty)"
+    folder: "src/content/cats"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Imię", name: "name", widget: "string" }
+      - { label: "Główne zdjęcie", name: "mainImage", widget: "image" }
+      - { label: "Galeria zdjęć", name: "gallery", widget: "list", field: { label: "Zdjęcie", name: "image", widget: "image" }, required: false }
+      - { label: "Umaszczenie", name: "color", widget: "string" }
+      - { label: "Data urodzenia", name: "birthDate", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD.MM.YYYY", time_format: false, required: false }
+      - { label: "Rodzice", name: "parents", widget: "string", required: false }
+      - { label: "Numer rodowodu", name: "pedigreeNumber", widget: "string", required: false }
+      - { label: "Opis", name: "description", widget: "text", required: false }
+      - { label: "Widoczny na stronie", name: "isVisible", widget: "boolean", default: true }
+      - { label: "Treść strony", name: "body", widget: "markdown", required: false }
+
+  # Mioty (Litters)
+  - name: "litters"
+    label: "Mioty"
+    folder: "src/content/litters"
+    create: true
+    slug: "miot-{{slug}}"
+    fields:
+      - { label: "Nazwa miotu", name: "name", widget: "string", hint: "np. A, B, C..." }
+      - { label: "Mama", name: "mother", widget: "string" }
+      - { label: "Tata", name: "father", widget: "string" }
+      - label: "Status"
+        name: "status"
+        widget: "select"
+        options:
+          - { label: "Planowany", value: "planned" }
+          - { label: "Dostępne kocięta", value: "available" }
+          - { label: "Zarezerwowane", value: "reserved" }
+          - { label: "Sprzedane", value: "sold" }
+        default: "planned"
+      - { label: "Data urodzenia", name: "birthDate", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD.MM.YYYY", time_format: false, required: false }
+      - { label: "Główne zdjęcie", name: "mainImage", widget: "image", required: false }
+      - { label: "Galeria zdjęć", name: "gallery", widget: "list", field: { label: "Zdjęcie", name: "image", widget: "image" }, required: false }
+      - { label: "Liczba kociąt", name: "kittensCount", widget: "number", required: false }
+      - { label: "Opis", name: "description", widget: "text", required: false }
+      - label: "Kocięta"
+        name: "kittens"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Imię", name: "name", widget: "string" }
+          - label: "Płeć"
+            name: "gender"
+            widget: "select"
+            options:
+              - { label: "Kocur", value: "male" }
+              - { label: "Kotka", value: "female" }
+          - { label: "Umaszczenie", name: "color", widget: "string" }
+          - label: "Status"
+            name: "status"
+            widget: "select"
+            options:
+              - { label: "Dostępny", value: "available" }
+              - { label: "Zarezerwowany", value: "reserved" }
+              - { label: "Sprzedany", value: "sold" }
+            default: "available"
+          - { label: "Zdjęcie", name: "image", widget: "image", required: false }
+          - { label: "Opis", name: "description", widget: "text", required: false }
+      - { label: "Treść strony", name: "body", widget: "markdown", required: false }
+
+  # Galeria (Gallery)
+  - name: "gallery"
+    label: "Galeria"
+    folder: "src/content/gallery"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Tytuł", name: "title", widget: "string" }
+      - { label: "Zdjęcie", name: "image", widget: "image" }
+      - label: "Kategoria"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Koty", value: "cats" }
+          - { label: "Kocięta", value: "kittens" }
+          - { label: "Codzienność", value: "daily" }
+          - { label: "Wystawy", value: "shows" }
+        required: false
+      - { label: "Kot (z Kototeki)", name: "catName", widget: "string", required: false, hint: "Wpisz imię kota, jeśli zdjęcie dotyczy konkretnego kota" }
+      - { label: "Opis", name: "description", widget: "text", required: false }
+      - { label: "Data", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "DD.MM.YYYY", time_format: false, required: false }
+
+  # Strony (Pages)
+  - name: "pages"
+    label: "Strony"
+    folder: "src/content/pages"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Tytuł", name: "title", widget: "string" }
+      - { label: "Opis (SEO)", name: "description", widget: "text", required: false }
+      - { label: "Obrazek główny", name: "image", widget: "image", required: false }
+      - { label: "Treść", name: "body", widget: "markdown" }

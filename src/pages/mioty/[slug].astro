@@ -1,0 +1,235 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PhotoGallery from '../../components/PhotoGallery.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const litters = await getCollection('litters');
+  return litters.map((litter) => ({
+    params: { slug: litter.id },
+    props: { litter },
+  }));
+}
+
+const { litter } = Astro.props;
+const { name, mother, father, birthDate, status, mainImage, gallery, kittensCount, description, kittens } = litter.data;
+const { Content } = await render(litter);
+
+const statusColors = {
+  available: 'bg-green-100 text-green-700 border-green-200',
+  reserved: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  sold: 'bg-lavender-200 text-lavender-600 border-lavender-300',
+  planned: 'bg-rose-gold-light text-rose-gold-dark border-rose-gold',
+};
+
+const statusLabels = {
+  available: 'Dostępne kocięta',
+  reserved: 'Zarezerwowane',
+  sold: 'Wszystkie sprzedane',
+  planned: 'Planowany miot',
+};
+
+const kittenStatusColors = {
+  available: 'bg-green-100 text-green-700',
+  reserved: 'bg-yellow-100 text-yellow-700',
+  sold: 'bg-lavender-200 text-lavender-600',
+};
+
+const kittenStatusLabels = {
+  available: 'Dostępny',
+  reserved: 'Zarezerwowany',
+  sold: 'Sprzedany',
+};
+
+const formattedBirthDate = birthDate ? new Date(birthDate).toLocaleDateString('pl-PL', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}) : 'Data zostanie ogłoszona';
+
+const galleryImages = gallery?.map((img, i) => ({
+  src: img,
+  alt: `Miot ${name} - zdjęcie ${i + 1}`,
+  title: `Miot ${name}`,
+})) || [];
+
+if (mainImage && !gallery?.includes(mainImage)) {
+  galleryImages.unshift({
+    src: mainImage,
+    alt: `Miot ${name}`,
+    title: `Miot ${name}`,
+  });
+}
+---
+
+<Layout 
+  title={`Miot ${name}`} 
+  description={description || `Miot ${name} - kocięta rasy Ragdoll z hodowli Kociak z Bajki*PL.`}
+  image={mainImage}
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-lavender-100 via-lavender-50 to-rose-gold-light/20 py-12">
+    <div class="container mx-auto px-4">
+      <nav class="mb-8">
+        <a href="/mioty" class="text-lavender-500 hover:text-rose-gold transition-colors">
+          ← Powrót do miotów
+        </a>
+      </nav>
+      
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-4">
+          <h1 class="text-5xl font-heading font-bold text-lavender-800">
+            Miot {name}
+          </h1>
+          <span class={`px-4 py-2 rounded-full text-sm font-medium border ${statusColors[status]}`}>
+            {statusLabels[status]}
+          </span>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8 mt-8">
+          {mainImage && (
+            <div class="aspect-video rounded-2xl overflow-hidden shadow-xl">
+              <img 
+                src={mainImage} 
+                alt={`Miot ${name}`}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          
+          <div class="bg-white rounded-xl p-6 shadow-lg">
+            <h2 class="font-heading text-xl font-semibold text-lavender-700 mb-4">
+              Informacje o miocie
+            </h2>
+            
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <span class="text-lavender-400 text-sm uppercase tracking-wide w-24">Mama</span>
+                <span class="text-lavender-700 font-medium">{mother}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-lavender-400 text-sm uppercase tracking-wide w-24">Tata</span>
+                <span class="text-lavender-700 font-medium">{father}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-lavender-400 text-sm uppercase tracking-wide w-24">Data</span>
+                <span class="text-lavender-700">{formattedBirthDate}</span>
+              </div>
+              {kittensCount && (
+                <div class="flex items-center gap-3">
+                  <span class="text-lavender-400 text-sm uppercase tracking-wide w-24">Kocięta</span>
+                  <span class="text-lavender-700">{kittensCount}</span>
+                </div>
+              )}
+            </div>
+            
+            {description && (
+              <p class="text-lavender-600 mt-6 pt-6 border-t border-lavender-100">
+                {description}
+              </p>
+            )}
+            
+            {status === 'available' && (
+              <a href="/kontakt?subject=reservation" class="btn-primary mt-6 block text-center">
+                Zarezerwuj kociaka
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Kittens -->
+  {kittens && kittens.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-heading font-bold text-lavender-700 text-center mb-12">
+          Kocięta z miotu {name}
+        </h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {kittens.map((kitten) => (
+            <div class="card p-6">
+              {kitten.image && (
+                <div class="aspect-square rounded-xl overflow-hidden mb-4">
+                  <img 
+                    src={kitten.image} 
+                    alt={kitten.name}
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-heading text-xl font-semibold text-lavender-700">
+                  {kitten.name}
+                </h3>
+                <span class={`px-2 py-1 rounded-full text-xs font-medium ${kittenStatusColors[kitten.status]}`}>
+                  {kittenStatusLabels[kitten.status]}
+                </span>
+              </div>
+              
+              <div class="space-y-2 text-sm text-lavender-600">
+                <div class="flex items-center gap-2">
+                  <span class="text-lavender-400">Płeć:</span>
+                  <span>{kitten.gender === 'male' ? 'Kocur' : 'Kotka'}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-lavender-400">Umaszczenie:</span>
+                  <span>{kitten.color}</span>
+                </div>
+              </div>
+              
+              {kitten.description && (
+                <p class="text-lavender-500 text-sm mt-4">
+                  {kitten.description}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+  
+  <!-- Additional Content -->
+  {litter.body && (
+    <section class="py-12 bg-lavender-50">
+      <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto prose prose-lavender">
+          <Content />
+        </div>
+      </div>
+    </section>
+  )}
+  
+  <!-- Gallery -->
+  {galleryImages.length > 1 && (
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-heading font-bold text-lavender-700 text-center mb-12">
+          Galeria zdjęć
+        </h2>
+        <div class="max-w-6xl mx-auto">
+          <PhotoGallery images={galleryImages} columns={3} />
+        </div>
+      </div>
+    </section>
+  )}
+  
+  <!-- CTA -->
+  <section class="py-16 bg-gradient-to-br from-lavender-700 to-lavender-800 text-white">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-heading font-bold mb-4">
+        Masz pytania?
+      </h2>
+      <p class="text-lavender-200 mb-8 max-w-xl mx-auto">
+        Chętnie odpowiemy na wszystkie pytania dotyczące tego miotu lub naszej hodowli.
+      </p>
+      <a href="/kontakt" class="btn-primary">
+        Skontaktuj się z nami
+      </a>
+    </div>
+  </section>
+</Layout>

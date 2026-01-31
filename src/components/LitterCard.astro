@@ -1,0 +1,83 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  litter: CollectionEntry<'litters'>;
+}
+
+const { litter } = Astro.props;
+const { name, mother, father, birthDate, status, mainImage, kittensCount } = litter.data;
+
+const statusColors = {
+  available: 'bg-green-100 text-green-700',
+  reserved: 'bg-yellow-100 text-yellow-700',
+  sold: 'bg-lavender-200 text-lavender-600',
+  planned: 'bg-rose-gold-light text-rose-gold-dark',
+};
+
+const statusLabels = {
+  available: 'Dostępne',
+  reserved: 'Zarezerwowane',
+  sold: 'Sprzedane',
+  planned: 'Planowany',
+};
+
+const formattedDate = birthDate ? new Date(birthDate).toLocaleDateString('pl-PL', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}) : 'Planowany';
+---
+
+<article class="card group cursor-pointer" onclick={`window.location.href='/mioty/${litter.slug}'`}>
+  <div class="aspect-video overflow-hidden relative">
+    <img 
+      src={mainImage || '/images/placeholder-litter.jpg'} 
+      alt={`Miot ${name}`}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      loading="lazy"
+    />
+    {status && (
+      <span class={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium ${statusColors[status]}`}>
+        {statusLabels[status]}
+      </span>
+    )}
+  </div>
+  <div class="p-6">
+    <h3 class="font-heading text-2xl font-semibold text-lavender-700 mb-3 group-hover:text-rose-gold transition-colors">
+      Miot {name}
+    </h3>
+    
+    <div class="space-y-2 text-sm text-lavender-600 mb-4">
+      {mother && (
+        <div class="flex items-center gap-2">
+          <span class="text-lavender-400">Mama:</span>
+          <span class="font-medium">{mother}</span>
+        </div>
+      )}
+      {father && (
+        <div class="flex items-center gap-2">
+          <span class="text-lavender-400">Tata:</span>
+          <span class="font-medium">{father}</span>
+        </div>
+      )}
+      <div class="flex items-center gap-2">
+        <span class="text-lavender-400">Data:</span>
+        <span class="font-medium">{formattedDate}</span>
+      </div>
+      {kittensCount && (
+        <div class="flex items-center gap-2">
+          <span class="text-lavender-400">Kocięta:</span>
+          <span class="font-medium">{kittensCount}</span>
+        </div>
+      )}
+    </div>
+    
+    <div class="flex items-center text-rose-gold text-sm font-medium">
+      <span>Zobacz szczegóły</span>
+      <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+/* Modern Fairytale Theme - Kociak z Bajki */
+@theme {
+  /* Colors */
+  --color-lavender-50: #faf8fc;
+  --color-lavender-100: #f5f0f9;
+  --color-lavender-200: #ebe0f3;
+  --color-lavender-300: #d9c7e8;
+  --color-lavender-400: #c0a3d9;
+  --color-lavender-500: #9b8aac;
+  --color-lavender-600: #7a6b8a;
+  --color-lavender-700: #5d4e6d;
+  --color-lavender-800: #4a3f55;
+  --color-lavender-900: #3d3548;
+  
+  --color-rose-gold: #d4a5a5;
+  --color-rose-gold-light: #e8c4c4;
+  --color-rose-gold-dark: #b88a8a;
+  
+  /* Fonts */
+  --font-heading: 'Cormorant Garamond', serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-lavender-50 text-lavender-800 font-body;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold text-lavender-700;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  a {
+    @apply text-lavender-600 hover:text-lavender-700 transition-colors;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-lavender-600 to-rose-gold bg-clip-text text-transparent;
+  }
+  
+  .btn-primary {
+    @apply inline-block px-6 py-3 bg-rose-gold text-white rounded-full 
+           hover:bg-rose-gold-dark transition-all duration-300 
+           shadow-lg hover:shadow-xl transform hover:-translate-y-0.5
+           font-medium;
+  }
+  
+  .btn-secondary {
+    @apply inline-block px-6 py-3 border-2 border-lavender-500 text-lavender-700 
+           rounded-full hover:bg-lavender-500 hover:text-white 
+           transition-all duration-300 font-medium;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl shadow-lg overflow-hidden 
+           hover:shadow-xl transition-shadow duration-300;
+  }
+}

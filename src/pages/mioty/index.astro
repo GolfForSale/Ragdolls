@@ -1,0 +1,132 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LitterCard from '../../components/LitterCard.astro';
+import { getCollection } from 'astro:content';
+
+const litters = await getCollection('litters');
+const sortedLitters = litters.sort((a, b) => {
+  // Sort by status (available first), then by date
+  const statusOrder = { available: 0, reserved: 1, planned: 2, sold: 3 };
+  const statusDiff = statusOrder[a.data.status] - statusOrder[b.data.status];
+  if (statusDiff !== 0) return statusDiff;
+  
+  const dateA = a.data.birthDate ? new Date(a.data.birthDate).getTime() : 0;
+  const dateB = b.data.birthDate ? new Date(b.data.birthDate).getTime() : 0;
+  return dateB - dateA;
+});
+---
+
+<Layout 
+  title="Mioty" 
+  description="Sprawdź nasze planowane i aktualne mioty kotów rasy Ragdoll. Rezerwacja kociąt z hodowli Kociak z Bajki*PL."
+>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-lavender-100 via-lavender-50 to-rose-gold-light/20 py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-heading font-bold text-lavender-800 mb-4">
+        Mioty
+      </h1>
+      <p class="text-xl text-lavender-600 max-w-2xl mx-auto">
+        Sprawdź nasze planowane i aktualne mioty. Każdy kociak to mały bohater własnej bajki.
+      </p>
+      <div class="w-24 h-1 bg-gradient-to-r from-lavender-400 to-rose-gold mx-auto mt-8 rounded-full"></div>
+    </div>
+  </section>
+  
+  <!-- Litters Grid -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      {sortedLitters.length > 0 ? (
+        <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {sortedLitters.map((litter) => (
+            <LitterCard litter={litter} />
+          ))}
+        </div>
+      ) : (
+        <div class="max-w-2xl mx-auto text-center">
+          <div class="bg-lavender-50 rounded-2xl p-12">
+            <span class="text-6xl mb-6 block">🐾</span>
+            <h2 class="font-heading text-2xl font-semibold text-lavender-700 mb-4">
+              Planujemy kolejne mioty
+            </h2>
+            <p class="text-lavender-600 mb-8">
+              Aktualnie planujemy nadchodzące mioty. Jeśli jesteś zainteresowany rezerwacją kociaka, 
+              skontaktuj się z nami.
+            </p>
+            <a href="/kontakt" class="btn-primary">
+              Skontaktuj się z nami
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+  
+  <!-- Info Section -->
+  <section class="py-16 bg-lavender-50">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-heading font-bold text-lavender-700 text-center mb-12">
+          Zanim zarezerwujesz kociaka
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="bg-white rounded-xl p-6 shadow-lg">
+            <div class="w-12 h-12 bg-lavender-100 rounded-full flex items-center justify-center mb-4">
+              <span class="text-2xl">📋</span>
+            </div>
+            <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-3">
+              Dokumentacja
+            </h3>
+            <p class="text-lavender-600 text-sm">
+              Wszystkie nasze koty posiadają 5-pokoleniowy rodowód FIFe, 
+              co daje gwarancję czystości rasy.
+            </p>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-lg">
+            <div class="w-12 h-12 bg-lavender-100 rounded-full flex items-center justify-center mb-4">
+              <span class="text-2xl">💉</span>
+            </div>
+            <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-3">
+              Zdrowie
+            </h3>
+            <p class="text-lavender-600 text-sm">
+              Kocięta opuszczają nas zaszczepione, odrobaczone i z książeczką zdrowia.
+            </p>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-lg">
+            <div class="w-12 h-12 bg-lavender-100 rounded-full flex items-center justify-center mb-4">
+              <span class="text-2xl">🏠</span>
+            </div>
+            <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-3">
+              Socjalizacja
+            </h3>
+            <p class="text-lavender-600 text-sm">
+              Nasze kocięta są przyzwyczajone do domowych odgłosów, dzieci i innych zwierząt.
+            </p>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-lg">
+            <div class="w-12 h-12 bg-lavender-100 rounded-full flex items-center justify-center mb-4">
+              <span class="text-2xl">❤️</span>
+            </div>
+            <h3 class="font-heading text-xl font-semibold text-lavender-700 mb-3">
+              Wsparcie
+            </h3>
+            <p class="text-lavender-600 text-sm">
+              Oferujemy stałe wsparcie i pomoc w opiece nad kotem przez całe jego życie.
+            </p>
+          </div>
+        </div>
+        
+        <div class="text-center mt-12">
+          <a href="/zanim-kupisz-kota" class="btn-secondary">
+            Przeczytaj więcej
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

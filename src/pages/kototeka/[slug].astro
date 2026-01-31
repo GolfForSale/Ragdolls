@@ -1,0 +1,128 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PhotoGallery from '../../components/PhotoGallery.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const cats = await getCollection('cats');
+  return cats.map((cat) => ({
+    params: { slug: cat.id },
+    props: { cat },
+  }));
+}
+
+const { cat } = Astro.props;
+const { name, mainImage, gallery, color, birthDate, parents, pedigreeNumber, description } = cat.data;
+const { Content } = await render(cat);
+
+const formattedBirthDate = birthDate ? new Date(birthDate).toLocaleDateString('pl-PL', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}) : null;
+
+const galleryImages = gallery?.map((img, i) => ({
+  src: img,
+  alt: `${name} - zdjęcie ${i + 1}`,
+  title: name,
+})) || [];
+
+// Add main image to gallery if not already included
+if (mainImage && !gallery?.includes(mainImage)) {
+  galleryImages.unshift({
+    src: mainImage,
+    alt: name,
+    title: name,
+  });
+}
+---
+
+<Layout 
+  title={name} 
+  description={description || `Poznaj ${name} - kota rasy Ragdoll z hodowli Kociak z Bajki*PL.`}
+  image={mainImage}
+>
+  <!-- Hero with cat photo -->
+  <section class="bg-gradient-to-br from-lavender-100 via-lavender-50 to-rose-gold-light/20 py-12">
+    <div class="container mx-auto px-4">
+      <nav class="mb-8">
+        <a href="/kototeka" class="text-lavender-500 hover:text-rose-gold transition-colors">
+          ← Powrót do Kototeki
+        </a>
+      </nav>
+      
+      <div class="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
+        <!-- Main Photo -->
+        <div class="relative">
+          <div class="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
+            <img 
+              src={mainImage} 
+              alt={name}
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+        
+        <!-- Info -->
+        <div>
+          <h1 class="text-5xl font-heading font-bold text-lavender-800 mb-4">
+            {name}
+          </h1>
+          <p class="text-xl text-rose-gold font-medium mb-6">{color}</p>
+          
+          <div class="space-y-4 mb-8">
+            {formattedBirthDate && (
+              <div class="flex items-center gap-3">
+                <span class="text-lavender-400 text-sm uppercase tracking-wide w-32">Data urodzenia</span>
+                <span class="text-lavender-700">{formattedBirthDate}</span>
+              </div>
+            )}
+            {parents && (
+              <div class="flex items-center gap-3">
+                <span class="text-lavender-400 text-sm uppercase tracking-wide w-32">Rodzice</span>
+                <span class="text-lavender-700">{parents}</span>
+              </div>
+            )}
+            {pedigreeNumber && (
+              <div class="flex items-center gap-3">
+                <span class="text-lavender-400 text-sm uppercase tracking-wide w-32">Rodowód</span>
+                <span class="text-lavender-700">{pedigreeNumber}</span>
+              </div>
+            )}
+          </div>
+          
+          {description && (
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+              <p class="text-lavender-600 leading-relaxed">{description}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Additional Content -->
+  {cat.body && (
+    <section class="py-12 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto prose prose-lavender">
+          <Content />
+        </div>
+      </div>
+    </section>
+  )}
+  
+  <!-- Gallery -->
+  {galleryImages.length > 1 && (
+    <section class="py-16 bg-lavender-50">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-heading font-bold text-lavender-700 text-center mb-12">
+          Galeria zdjęć
+        </h2>
+        <div class="max-w-6xl mx-auto">
+          <PhotoGallery images={galleryImages} columns={3} />
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
