@@ -66,28 +66,49 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     
     <!-- Netlify Identity - handle confirmation and login -->
     <script is:inline>
-      // Initialize Netlify Identity and handle tokens
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", function(user) {
-          if (!user) {
-            window.netlifyIdentity.on("login", function() {
-              document.location.href = "/admin/";
-            });
+      (function() {
+        // Wait for netlifyIdentity to be available
+        function initIdentity() {
+          if (typeof window.netlifyIdentity === 'undefined') {
+            setTimeout(initIdentity, 100);
+            return;
           }
-        });
-        
-        // Handle confirmation, recovery, and invite tokens
-        window.netlifyIdentity.on("error", function(err) {
-          console.error("Netlify Identity Error:", err);
-        });
-        
-        // Check if there's a token in the URL and open the modal
-        const hash = window.location.hash;
-        if (hash && (hash.includes("confirmation_token") || hash.includes("recovery_token") || hash.includes("invite_token"))) {
-          // Open the identity modal to process the token
-          window.netlifyIdentity.open();
+          
+          var netlifyIdentity = window.netlifyIdentity;
+          
+          // Handle login redirect
+          netlifyIdentity.on("init", function(user) {
+            if (!user) {
+              netlifyIdentity.on("login", function() {
+                document.location.href = "/admin/";
+              });
+            }
+          });
+          
+          // Handle errors
+          netlifyIdentity.on("error", function(err) {
+            console.error("Netlify Identity Error:", err);
+          });
+          
+          // Check for tokens in URL hash and open modal
+          var hash = window.location.hash;
+          if (hash) {
+            if (hash.includes("confirmation_token") || 
+                hash.includes("recovery_token") || 
+                hash.includes("invite_token") ||
+                hash.includes("access_token")) {
+              netlifyIdentity.open();
+            }
+          }
         }
-      }
+        
+        // Start initialization after DOM is ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initIdentity);
+        } else {
+          initIdentity();
+        }
+      })();
     </script>
   </body>
 </html>
